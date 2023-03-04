@@ -1,0 +1,355 @@
+# Data-Structure
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+typedef struct Node node;
+
+struct Node
+{
+    char name[20];
+    char vehicle_name[20];
+    char vehicle_no[20];
+    char arrival_vehicle[30];
+    char departure_vehicle[20];
+    char type[20];
+    node *next;
+} park, *head = NULL;
+
+FILE *file, *f1;
+int car = 0, bike = 0, truck=0, scooter=0, k = 0;
+
+void saved_data()
+{
+
+    node *temp, *new_node;
+    car = 0;
+    bike = 0;
+    truck = 0;
+    scooter=0;
+    head = NULL;
+    rewind(file); // move file position indicator to the beginning
+    while ((fread(&park, sizeof(park), 1, file)) == 1)
+    {
+        temp = (node *)malloc(sizeof(node));
+        strcpy(temp->name, park.name);
+        strcpy(temp->vehicle_name, park.vehicle_name);
+        strcpy(temp->vehicle_no, park.vehicle_no);
+        strcpy(temp->arrival_vehicle, park.arrival_vehicle);
+        strcpy(temp->vehicle_name, park.vehicle_name);
+        strcpy(temp->type, park.type);
+        if (strcmp(temp->type, "C") == 0 || strcmp(temp->type, "c") == 0)
+            car++;
+        if (strcmp(temp->type, "B") == 0 || strcmp(temp->type, "b") == 0)
+            bike++;
+        if (strcmp(temp->type, "T") == 0 || strcmp(temp->type, "t") == 0)
+            truck++;
+        if (strcmp(temp->type, "S") == 0 || strcmp(temp->type, "s") == 0)
+            scooter++;
+        strcpy(temp->departure_vehicle, park.departure_vehicle);
+
+        temp->next = NULL;
+        if (head == NULL)
+        {
+            head = temp;
+            new_node = temp;
+        }
+        else
+        {
+            new_node->next = temp;
+            new_node = temp;
+        }
+    }
+}
+void addrecord()
+{
+
+    char check = 'y';
+
+    while (check == 'y' || check == 'Y')
+    {
+        k++;
+        printf("\t\tParking %d:\n", k);
+
+        fflush(stdin);
+        printf("\t\t\t\tEnter Owner Name:");
+        gets(park.name);
+        fflush(stdin);
+
+        printf("\n\t\t\t\tEnter Vehicle Name:");
+        scanf("%s", park.vehicle_name);
+
+        fflush(stdin);
+        printf("\n\t\t\t\tEnter Vehicle No:");
+        gets(park.vehicle_no);
+
+        fflush(stdin);
+        printf("\n\t\t\t\tArrival of Vehicle:");
+        gets(park.arrival_vehicle);
+
+        fflush(stdin);
+        printf("\n\t\t\t\tIf Car/Bike/Truck/Scooter write C/B/T/S: ");
+        scanf("%s", park.type);
+
+        printf("\n\t\t\t\tDeparture of Vehicle:");
+        scanf("%s", park.departure_vehicle);
+
+        fwrite(&park, sizeof(park), 1, file);
+        printf("\n\t\t\t\tDo You Want to Add More Information (y/n)--> ");
+        getchar();
+        check = getchar();
+        printf("\n");
+        // k++;
+    }
+}
+void print_title()
+{
+    printf("\n\t\t\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\n");
+	printf("\t\t\xdb                                               \xdb\n");
+	printf("\t\t\xdb       =============================           \xdb\n");
+	printf("\t\t\xdb           CAR PARKING MANAGEMENT              \xdb\n");
+	printf("\t\t\xdb       =============================           \xdb\n");
+	printf("\t\t\xdb                                               \xdb\n");
+	printf("\t\t\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\xdb\n\n\n");
+}
+void modify_data()
+{
+    print_title();
+    int check = 0;
+    char name1[100];
+    printf("\n\t\tEnter name to Modify:");
+    scanf("%s", name1);
+
+    rewind(file); // move file position indicator to the beginning
+    while ((fread(&park, sizeof(park), 1, file) == 1))
+    {
+        if (strcmp(name1, park.name) == 0)
+        {
+            check = 1;
+            break;
+        }
+    }
+
+    if (check == 0)
+        printf("\n\t\tRecord not found!!!\n\n");
+    else
+    {
+        fseek(file, sizeof(park), SEEK_CUR); // file position indicator to the current
+        printf("\n\t\tEnter new data :\n\n");
+
+        fflush(stdin);
+        printf("\t\t\t\tEnter Name:");
+        gets(park.name);
+        fflush(stdin);
+
+        printf("\n\t\t\t\tEnter Vehicle Name:");
+        scanf("%s", park.vehicle_name);
+
+        fflush(stdin);
+        printf("\n\t\t\t\tEnter Vehicle No:");
+        gets(park.vehicle_no);
+
+        fflush(stdin);
+        printf("\n\t\t\t\tArrival Vehicle:");
+        gets(park.arrival_vehicle);
+
+        printf("\n\t\t\t\tDeparture of Vehicle:");
+        scanf("%s", park.departure_vehicle);
+
+        fflush(stdin);
+        printf("\n\t\t\t\tIf Car/Bike/Truck/Scooter type C/B/T/S:");
+        scanf("%s", park.type);
+
+        fwrite(&park, sizeof(park), 1, file);
+    }
+    if (check == 1)
+    {
+        printf("\n\t\tRecord was changed successfully.\n");
+    }
+    printf("\n");
+    system("pause"); // Make the screen wait for a key press.
+}
+
+void display()
+{
+    print_title();
+    saved_data();
+    node *c=head;
+    if(head!=NULL)
+    {
+        printf("\n\n%-15s %-30s %-20s %-30s %-20s","Name", "Vehicle Name", "Vehicle No", "Arrival Vehicle","Departure Vehicle");
+        printf("\n----------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
+
+    }
+    while(c!=NULL)
+    {
+        printf("%-15s %-30s %-20s %-30s %-20s\n",c->name,c->vehicle_name,c->vehicle_no,c->arrival_vehicle,c->departure_vehicle);
+        c=c->next;
+    }
+
+    printf("\n");
+    system("pause"); //Make the screen wait for a key press.
+}
+void delete_records()
+{
+
+    print_title();
+    char name1[100];
+    FILE *tmp;
+    if ((tmp = fopen("tmp.txt", "wb+")) == NULL)
+    {
+        printf("\n\t\tCan not be opened");
+    }
+    printf("\n\t\tEnter Name that to be delete:");
+    scanf("%s", name1);
+    int check = 0;
+    rewind(file); // move file position indicator to the beginning
+
+    while ((fread(&park, sizeof(park), 1, file)) == 1)
+    {
+        if (strcmp(park.name, name1) == 0)
+        {
+            check = 1;
+        }
+        else
+        {
+            fwrite(&park, sizeof(park), 1, tmp);
+        }
+    }
+    fclose(file);
+    fclose(tmp);
+    remove("parking.txt");            // the file to delete
+    rename("tmp.txt", "parking.txt"); // rename the file
+    if ((file = fopen("parking.txt", "rb+")) == NULL)
+    {
+        printf("Can not be opened.");
+    }
+    if (check == 1)
+    {
+        printf("\n\t\tThe record has been deleted successfully.\n");
+    }
+    if (check == 0)
+        printf("\n\t\t\tERROR!!Record Not Found..\n");
+
+    printf("\n");
+    system("pause"); // Make the screen wait for a key press.
+}
+
+void search_record()
+{
+
+    print_title();
+    saved_data();
+
+    char flag = 'y';
+    do
+    {
+        node *c = head, *temp = NULL;
+        char name1[100];
+        printf("\n\t\t\tEnter Name:");
+        scanf("%s", name1);
+        printf("\n");
+        while (c != NULL)
+        {
+            if (strcmp(c->name, name1) == 0)
+            {
+                temp = c;
+                break;
+            }
+            c = c->next;
+        }
+        if (temp == NULL)
+            printf("\t\tRecord Not found!!!\n\n");
+        else
+        {
+
+            printf("\n\t\tPARKING\tName: %s\n", temp->name);
+            printf("\n\t\tPARKING\tVehicle of Name: %s\n", temp->vehicle_name);
+            printf("\n\t\tPARKING\tVehicle No: %s\n", temp->vehicle_no);
+            printf("\n\t\tPARKING\tArrival Vehicle: %s\n", temp->arrival_vehicle);
+            printf("\n\t\tPARKING\tType\t: %s\n", temp->type);
+            printf("\n\t\tPARKING\tDeparture of Vehicle\t: %s\n\n\n", temp->departure_vehicle);
+        }
+        getchar(); // For clearing the input buffer
+        printf("Do you want to search more (Y/N) :");
+        scanf("%c", &flag);
+
+    } while (flag == 'y' || flag == 'Y');
+
+    printf("\n");
+    system("pause"); // Make the screen wait for a key press.
+}
+
+int main()
+{
+
+    if ((file = fopen("parking.txt", "rb+")) == NULL)
+    {
+        if ((file = fopen("parking.txt", "wb+")) == NULL)
+        {
+            printf("The file can not be opened\n");
+        }
+    }
+
+    while (1)
+    {
+
+        int press;
+        printf("\n");
+        print_title();
+
+        printf("\t1>> Add New Records\n\n");
+        printf("\t2>> Display all Students Records\n\n");
+        printf("\t3>> Delete Records\n\n");
+        printf("\t4>> Search and View Records\n\n");
+        printf("\t5>> Modify Records\n\n");
+        printf("\t6>> Exit\n\n");
+
+        int choice;
+        printf("\n\t\tEnter your choice: ");
+        scanf("%d", &choice);
+        switch (choice)
+        {
+            case 1:
+            {
+                addrecord();
+            }
+            break;
+            case 2:
+            {
+                display();
+            }
+            break;
+            case 3:
+            {
+                delete_records();
+            }
+            break;
+            case 4:
+            {
+                search_record();
+            }
+            break;
+
+            case 5:
+
+            {
+                modify_data();
+            }
+            break;
+            case 6:
+
+            {
+                system("cls");
+                exit(0);
+            }
+            break;
+            default:
+            {
+                printf("Wrong Input.. END!!\n");
+            }
+        }
+    }
+    return 0;
+}
